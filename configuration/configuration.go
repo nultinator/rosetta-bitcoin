@@ -22,7 +22,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/coinbase/rosetta-bitcoin/bitcoin"
+	"github.com/nultinator/rosetta-ycash/ycash"
 
 	"github.com/btcsuite/btcd/chaincfg"
 	"github.com/coinbase/rosetta-sdk-go/storage/encoder"
@@ -50,36 +50,25 @@ const (
 
 	// mainnetConfigPath is the path of the Bitcoin
 	// configuration file for mainnet.
-	mainnetConfigPath = "/app/bitcoin-mainnet.conf"
+	mainnetConfigPath = "/app/ycash-mainnet.conf"
 
 	// testnetConfigPath is the path of the Bitcoin
 	// configuration file for testnet.
-	testnetConfigPath = "/app/bitcoin-testnet.conf"
+	testnetConfigPath = "/app/ycash-testnet.conf"
 
 	// Zstandard compression dictionaries
 	transactionNamespace         = "transaction"
 	testnetTransactionDictionary = "/app/testnet-transaction.zstd"
 	mainnetTransactionDictionary = "/app/mainnet-transaction.zstd"
 
-	mainnetRPCPort = 8332
-	testnetRPCPort = 18332
-
-	// min prune depth is 288:
-	// https://github.com/bitcoin/bitcoin/blob/ad2952d17a2af419a04256b10b53c7377f826a27/src/validation.h#L84
-	pruneDepth = int64(10000) //nolint
-
-	// min prune height (on mainnet):
-	// https://github.com/bitcoin/bitcoin/blob/62d137ac3b701aae36c1aa3aa93a83fd6357fde6/src/chainparams.cpp#L102
-	minPruneHeight = int64(100000) //nolint
-
-	// attempt to prune once an hour
-	pruneFrequency = 60 * time.Minute
+	mainnetRPCPort = 8832
+	testnetRPCPort = 18832
 
 	// DataDirectory is the default location for all
 	// persistent data.
 	DataDirectory = "/data"
 
-	bitcoindPath = "bitcoind"
+	ycashdPath = "ycashd"
 	indexerPath  = "indexer"
 
 	// allFilePermissions specifies anyone can do anything
@@ -100,14 +89,6 @@ const (
 	PortEnv = "PORT"
 )
 
-// PruningConfiguration is the configuration to
-// use for pruning in the indexer.
-type PruningConfiguration struct {
-	Frequency time.Duration
-	Depth     int64
-	MinHeight int64
-}
-
 // Configuration determines how
 type Configuration struct {
 	Mode                   Mode
@@ -118,9 +99,8 @@ type Configuration struct {
 	Port                   int
 	RPCPort                int
 	ConfigPath             string
-	Pruning                *PruningConfiguration
 	IndexerPath            string
-	BitcoindPath           string
+	ycashdPath           string
 	Compressors            []*encoder.CompressorEntry
 }
 
@@ -128,12 +108,6 @@ type Configuration struct {
 // using the ENVs in the environment.
 func LoadConfiguration(baseDirectory string) (*Configuration, error) {
 	config := &Configuration{}
-	config.Pruning = &PruningConfiguration{
-		Frequency: pruneFrequency,
-		Depth:     pruneDepth,
-		MinHeight: minPruneHeight,
-	}
-
 	modeValue := Mode(os.Getenv(ModeEnv))
 	switch modeValue {
 	case Online:
@@ -143,9 +117,9 @@ func LoadConfiguration(baseDirectory string) (*Configuration, error) {
 			return nil, fmt.Errorf("%w: unable to create indexer path", err)
 		}
 
-		config.BitcoindPath = path.Join(baseDirectory, bitcoindPath)
-		if err := ensurePathExists(config.BitcoindPath); err != nil {
-			return nil, fmt.Errorf("%w: unable to create bitcoind path", err)
+		config.ycashdPath = path.Join(baseDirectory, ycashdPath)
+		if err := ensurePathExists(config.ycashdPath); err != nil {
+			return nil, fmt.Errorf("%w: unable to create ycashd path", err)
 		}
 	case Offline:
 		config.Mode = Offline
@@ -159,12 +133,12 @@ func LoadConfiguration(baseDirectory string) (*Configuration, error) {
 	switch networkValue {
 	case Mainnet:
 		config.Network = &types.NetworkIdentifier{
-			Blockchain: bitcoin.Blockchain,
-			Network:    bitcoin.MainnetNetwork,
+			Blockchain: ycash.Blockchain,
+			Network:    ycash.MainnetNetwork,
 		}
-		config.GenesisBlockIdentifier = bitcoin.MainnetGenesisBlockIdentifier
-		config.Params = bitcoin.MainnetParams
-		config.Currency = bitcoin.MainnetCurrency
+		config.GenesisBlockIdentifier = ycash.MainnetGenesisBlockIdentifier
+		config.Params = ycash.MainnetParams
+		config.Currency = ycash.MainnetCurrency
 		config.ConfigPath = mainnetConfigPath
 		config.RPCPort = mainnetRPCPort
 		config.Compressors = []*encoder.CompressorEntry{
@@ -175,12 +149,12 @@ func LoadConfiguration(baseDirectory string) (*Configuration, error) {
 		}
 	case Testnet:
 		config.Network = &types.NetworkIdentifier{
-			Blockchain: bitcoin.Blockchain,
-			Network:    bitcoin.TestnetNetwork,
+			Blockchain: ycash.Blockchain,
+			Network:    ycash.TestnetNetwork,
 		}
-		config.GenesisBlockIdentifier = bitcoin.TestnetGenesisBlockIdentifier
-		config.Params = bitcoin.TestnetParams
-		config.Currency = bitcoin.TestnetCurrency
+		config.GenesisBlockIdentifier = ycash.TestnetGenesisBlockIdentifier
+		config.Params = ycash.TestnetParams
+		config.Currency = ycash.TestnetCurrency
 		config.ConfigPath = testnetConfigPath
 		config.RPCPort = testnetRPCPort
 		config.Compressors = []*encoder.CompressorEntry{

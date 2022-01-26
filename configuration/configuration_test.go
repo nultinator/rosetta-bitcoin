@@ -20,7 +20,7 @@ import (
 	"path"
 	"testing"
 
-	"github.com/coinbase/rosetta-bitcoin/bitcoin"
+	"github.com/nultinator/rosetta-ycash/ycash"
 
 	"github.com/coinbase/rosetta-sdk-go/storage/encoder"
 	"github.com/coinbase/rosetta-sdk-go/types"
@@ -56,19 +56,15 @@ func TestLoadConfiguration(t *testing.T) {
 			cfg: &Configuration{
 				Mode: Online,
 				Network: &types.NetworkIdentifier{
-					Network:    bitcoin.MainnetNetwork,
-					Blockchain: bitcoin.Blockchain,
+					Network:    ycash.MainnetNetwork,
+					Blockchain: ycash.Blockchain,
 				},
-				Params:                 bitcoin.MainnetParams,
-				Currency:               bitcoin.MainnetCurrency,
-				GenesisBlockIdentifier: bitcoin.MainnetGenesisBlockIdentifier,
+				Params:                 ycash.MainnetParams,
+				Currency:               ycash.MainnetCurrency,
+				GenesisBlockIdentifier: ycash.MainnetGenesisBlockIdentifier,
 				Port:                   1000,
 				RPCPort:                mainnetRPCPort,
 				ConfigPath:             mainnetConfigPath,
-				Pruning: &PruningConfiguration{
-					Frequency: pruneFrequency,
-					Depth:     pruneDepth,
-					MinHeight: minPruneHeight,
 				},
 				Compressors: []*encoder.CompressorEntry{
 					{
@@ -85,19 +81,15 @@ func TestLoadConfiguration(t *testing.T) {
 			cfg: &Configuration{
 				Mode: Online,
 				Network: &types.NetworkIdentifier{
-					Network:    bitcoin.TestnetNetwork,
-					Blockchain: bitcoin.Blockchain,
+					Network:    ycash.TestnetNetwork,
+					Blockchain: ycash.Blockchain,
 				},
-				Params:                 bitcoin.TestnetParams,
-				Currency:               bitcoin.TestnetCurrency,
-				GenesisBlockIdentifier: bitcoin.TestnetGenesisBlockIdentifier,
+				Params:                 ycash.TestnetParams,
+				Currency:               ycash.TestnetCurrency,
+				GenesisBlockIdentifier: ycash.TestnetGenesisBlockIdentifier,
 				Port:                   1000,
 				RPCPort:                testnetRPCPort,
 				ConfigPath:             testnetConfigPath,
-				Pruning: &PruningConfiguration{
-					Frequency: pruneFrequency,
-					Depth:     pruneDepth,
-					MinHeight: minPruneHeight,
 				},
 				Compressors: []*encoder.CompressorEntry{
 					{
@@ -143,7 +135,7 @@ func TestLoadConfiguration(t *testing.T) {
 				assert.Contains(t, err.Error(), test.err.Error())
 			} else {
 				test.cfg.IndexerPath = path.Join(newDir, "indexer")
-				test.cfg.BitcoindPath = path.Join(newDir, "bitcoind")
+				test.cfg.ycashdPath = path.Join(newDir, "ycashd")
 				assert.Equal(t, test.cfg, cfg)
 				assert.NoError(t, err)
 			}
