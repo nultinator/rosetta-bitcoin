@@ -696,7 +696,7 @@ func (b *Client) getInputTxHash(
 	txIndex int,
 	inputIndex int,
 ) (string, int64, bool) {
-	if bitcoinIsCoinbaseInput(input, txIndex, inputIndex) {
+	if ycashIsCoinbaseInput(input, txIndex, inputIndex) {
 		return "", -1, false
 	}
 
@@ -706,7 +706,7 @@ func (b *Client) getInputTxHash(
 // bitcoinIsCoinbaseInput returns whether the specified input is
 // the coinbase input. The coinbase input is always the first input in the first
 // transaction, and does not contain a previous transaction hash.
-func bitcoinIsCoinbaseInput(input *Input, txIndex int, inputIndex int) bool {
+func ycashIsCoinbaseInput(input *Input, txIndex int, inputIndex int) bool {
 	return txIndex == 0 && inputIndex == 0 && input.TxHash == "" && input.Coinbase != ""
 }
 
