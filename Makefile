@@ -24,7 +24,7 @@ deps:
 	go get ./...
 
 build:
-	docker build -t rosetta-ycash:latest https://github.com/nultinator/rosetta-ycash
+	docker build --pull -t rosetta-ycash:latest https://github.com/nultinator/rosetta-ycash.git
 
 build-local:
 	docker build --pull -t rosetta-ycash:latest .
