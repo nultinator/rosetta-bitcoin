@@ -23,9 +23,9 @@ import (
 	"time"
 
 	"github.com/nultinator/rosetta-ycash/ycash"
-	"github.com/coinbase/rosetta-bitcoin/configuration"
-	"github.com/coinbase/rosetta-bitcoin/services"
-	"github.com/coinbase/rosetta-bitcoin/utils"
+	"github.com/nultinator/rosetta-ycash/configuration"
+	"github.com/nultinator/rosetta-ycash/services"
+	"github.com/nultinator/rosetta-ycash/utils"
 
 	"github.com/coinbase/rosetta-sdk-go/asserter"
 	"github.com/coinbase/rosetta-sdk-go/storage/database"
@@ -207,8 +207,8 @@ func Initialize(
 	asserter, err := asserter.NewClientWithOptions(
 		config.Network,
 		config.GenesisBlockIdentifier,
-		bitcoin.OperationTypes,
-		bitcoin.OperationStatuses,
+		ycash.OperationTypes,
+		ycash.OperationStatuses,
 		services.Errors,
 		nil,
 		new(asserter.Validations),
@@ -605,7 +605,7 @@ func (i *Indexer) findCoins(
 	yecBlock *ycash.Block,
 	coins []string,
 ) (map[string]*types.AccountCoin, error) {
-	if err := i.checkHeaderMatch(ctx, btcBlock); err != nil {
+	if err := i.checkHeaderMatch(ctx, yecBlock); err != nil {
 		return nil, fmt.Errorf("%w: check header match failed", err)
 	}
 
@@ -751,14 +751,14 @@ func (i *Indexer) Block(
 func (i *Indexer) GetScriptPubKeys(
 	ctx context.Context,
 	coins []*types.Coin,
-) ([]*bitcoin.ScriptPubKey, error) {
+) ([]*ycash.ScriptPubKey, error) {
 	databaseTransaction := i.database.ReadTransaction(ctx)
 	defer databaseTransaction.Discard(ctx)
 
 	scripts := make([]*ycash.ScriptPubKey, len(coins))
 	for j, coin := range coins {
 		coinIdentifier := coin.CoinIdentifier
-		transactionHash, networkIndex, err := bitcoin.ParseCoinIdentifier(coinIdentifier)
+		transactionHash, networkIndex, err := ycash.ParseCoinIdentifier(coinIdentifier)
 		if err != nil {
 			return nil, fmt.Errorf("%w: unable to parse coin identifier", err)
 		}
