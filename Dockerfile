@@ -64,11 +64,11 @@ RUN mkdir -p "$GOPATH/src" "$GOPATH/bin" && chmod -R 777 "$GOPATH"
 # Use native remote build context to build in any directory
 COPY . src 
 RUN cd src \
-  && go build \
-  && cd .. \
-  && mv src/rosetta-ycash /app/rosetta-ycash \
-  && mv src/assets/* /app \
-  && rm -rf src 
+  #&& go build \
+  #&& cd .. \
+  #&& mv src/rosetta-ycash /app/rosetta-ycash \
+  #&& mv src/assets/* /app \
+  #&& rm -rf src 
 
 ## Build Final Image
 FROM ubuntu:20.04
