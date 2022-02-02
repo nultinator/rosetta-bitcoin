@@ -19,22 +19,26 @@ RUN mkdir -p /app \
   && chown -R nobody:nogroup /app
 WORKDIR /app
 
+RUN apt-get update && \
+    apt-get install -yq tzdata && \
+    
+    ln -fs /usr/share/zoneinfo/America/New_York /etc/localtime && \
+    dpkg-reconfigure -f noninteractive tzdata
+
 # Source: https://github.com/bitcoin/bitcoin/blob/master/doc/build-unix.md#ubuntu--debian
 RUN apt-get update && apt-get install -y make gcc g++ autoconf autotools-dev bsdmainutils build-essential git libboost-all-dev \
-  libcurl4-openssl-dev libdb++-dev libevent-dev libssl-dev libtool pkg-config python python-pip libzmq3-dev wget
+  libcurl4-openssl-dev libdb++-dev libevent-dev libssl-dev libtool pkg-config python python3-pip libzmq3-dev wget
+
+RUN apt-get update && apt-get install -y curl make gcc g++
 
 # VERSION: Ycash 4.4.2
 RUN git clone  https://github.com/ycashfoundation/ycash.git\
   && cd ycash \
-  && git checkout 7ff64311bee570874c4f0dfa18f518552188df08
-
-RUN cd ycash \
-  && ./autogen.sh \
-  && ./configure --disable-tests --without-miniupnpc --without-gui --with-incompatible-bdb --disable-hardening --disable-zmq --disable-bench --disable-wallet \
-  && make
+  && git checkout \
+  && export MAKEFLAGS="-j $(($(nproc)+1))" && ./zcutil/build.sh
 
 RUN mv ycash/src/ycashd /app/ycashd \
-  && rm -rf ycash
+ && rm -rf ycash
 
 # Build Rosetta Server Components
 FROM ubuntu:20.04 as rosetta-builder

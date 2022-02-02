@@ -13,7 +13,7 @@ GOLINT_CMD=golint
 GOVERALLS_INSTALL=go install github.com/mattn/goveralls@latest
 GOVERALLS_CMD=goveralls
 GOIMPORTS_CMD=go run golang.org/x/tools/cmd/goimports
-GO_PACKAGES=./services/... ./indexer/... ./ycash/... ./configuration/...
+GO_PACKAGES=./services/... ./indexer/... ./ycash/... ./ycashd/... ./configuration/...
 GO_FOLDERS=$(shell echo ${GO_PACKAGES} | sed -e "s/\.\///g" | sed -e "s/\/\.\.\.//g")
 TEST_SCRIPT=go test ${GO_PACKAGES}
 LINT_SETTINGS=golint,misspell,gocyclo,gocritic,whitespace,goconst,gocognit,bodyclose,unconvert,lll,unparam
@@ -24,15 +24,15 @@ deps:
 	go get ./...
 
 build:
-	docker build -t rosetta-ycash:latest https://github.com/nultinator/rosetta-ycash.git
+	docker build -t rosetta-ycash:latest https://github.com/nultinator/rosetta-ycash
 
 build-local:
-	docker build -t rosetta-ycash:latest .
+	docker build --pull -t rosetta-ycash:latest .
 
 build-release:
 	# make sure to always set version with vX.X.X
-	docker build -t rosetta-ycash:$(version) .;
-	docker save rosetta-ycash:$(version) | gzip > rosetta-ycash-$(version).tar.gz;
+	docker build --pull --no-cache --build-arg IS_RELEASE=true -t rosetta-ycash:$(version) .;
+	docker save rosetta-ycash:$(version) | ${GZIP_CMD} > rosetta-ycash-$(version).tar.gz;
 
 run-mainnet-online:
 	docker run -d --rm --ulimit "nofile=${NOFILE}:${NOFILE}" -v "${PWD}/ycash-data:/data" -e "MODE=ONLINE" -e "NETWORK=MAINNET" -e "PORT=8080" -p 8080:8080 -p 8333:8333 rosetta-ycash:latest

@@ -44,8 +44,8 @@ execute() {
   log_info "downloading image into ${tmpdir}"
   http_download "${tmpdir}/${TARBALL}" "${TARBALL_URL}" "" "1"
   docker load --input "${tmpdir}/${TARBALL}"
-  docker tag "rosetta-ycash:${TAG}" "rosetta-ycash:latest"
-  log_info "loaded rosetta-ycash:${TAG} and tagged as rosetta-ycash:latest"
+  docker tag "rosetta-ycash:${TAG}" "rosetta-ycash"
+  log_info "loaded rosetta-ycash:${TAG} and tagged as rosetta-ycash"
   rm -rf "${tmpdir}"
   log_info "removed temporary directory ${tmpdir}"
 }
@@ -198,7 +198,7 @@ EOF
 
 BINARY=rosetta-ycash
 FORMAT=tar.gz
-OWNER=coinbase
+OWNER="nultinator"
 REPO="rosetta-ycash"
 PREFIX="$OWNER/$REPO"
 
