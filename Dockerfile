@@ -88,7 +88,7 @@ WORKDIR /app
 COPY --from=ycashd-builder /app/ycashd /app/ycashd
 
 # Copy binary from rosetta-builder
-COPY --from=rosetta-builder /app/* /app/
+#COPY --from=rosetta-builder /app/* /app/
 
 # Set permissions for everything added to /app
 RUN chmod -R 755 /app/*
