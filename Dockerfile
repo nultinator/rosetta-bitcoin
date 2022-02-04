@@ -45,12 +45,12 @@ FROM ubuntu:20.04 as rosetta-builder
 
 RUN mkdir -p /app \
   && chown -R nobody:nogroup /app
-WORKDIR /app
+WORKDIR /app 
 
 RUN apt-get update && apt-get install -y curl make gcc g++
-ENV GOLANG_VERSION 1.15.5
-ENV GOLANG_DOWNLOAD_SHA256 9a58494e8da722c3aef248c9227b0e9c528c7318309827780f16220998180a0d
-ENV GOLANG_DOWNLOAD_URL https://golang.org/dl/go$GOLANG_VERSION.linux-amd64.tar.gz
+ENV GOLANG_VERSION 1.17.6
+ENV GOLANG_DOWNLOAD_SHA256 231654bbf2dab3d86c1619ce799e77b03d96f9b50770297c8f4dff8836fc8ca2
+ENV GOLANG_DOWNLOAD_URL https://go.dev/dl/go1.17.6.linux-amd64.tar.gz
 
 RUN curl -fsSL "$GOLANG_DOWNLOAD_URL" -o golang.tar.gz \
   && echo "$GOLANG_DOWNLOAD_SHA256  golang.tar.gz" | sha256sum -c - \
@@ -59,19 +59,21 @@ RUN curl -fsSL "$GOLANG_DOWNLOAD_URL" -o golang.tar.gz \
 
 ENV GOPATH /go
 ENV PATH $GOPATH/bin:/usr/local/go/bin:$PATH
-RUN mkdir -p "$GOPATH/src" "$GOPATH/bin" && chmod -R 777 "$GOPATH"
+RUN mkdir -p "$GOPATH/src" "$GOPATH/bin" && chmod -R 777 "$GOPATH" \
+  && cd "$GOPATH/bin"
 
 # Use native remote build context to build in any directory
-COPY . src 
+COPY . src
 RUN cd src \
-  #&& go build \
+  && pwd \
+  && go build 
   #&& cd .. \
   #&& mv src/rosetta-ycash /app/rosetta-ycash \
   #&& mv src/assets/* /app \
   #&& rm -rf src 
 
 ## Build Final Image
-FROM ubuntu:20.04
+FROM ubuntu:20.04 as nobody
 
 RUN apt-get update && \
   apt-get install --no-install-recommends -y libevent-dev libboost-system-dev libboost-filesystem-dev libboost-test-dev libboost-thread-dev && \
