@@ -267,7 +267,7 @@ func (s *ConstructionAPIService) ConstructionPayloads(
 			return nil, wrapErr(ErrUnclearIntent, errors.New("CoinChange cannot be nil"))
 		}
 
-		transactionHash, index, err := bitcoin.ParseCoinIdentifier(input.CoinChange.CoinIdentifier)
+		transactionHash, index, err := ycash.ParseCoinIdentifier(input.CoinChange.CoinIdentifier)
 		if err != nil {
 			return nil, wrapErr(ErrInvalidCoin, err)
 		}
@@ -324,7 +324,7 @@ func (s *ConstructionAPIService) ConstructionPayloads(
 			return nil, wrapErr(ErrUnableToDecodeScriptPubKey, err)
 		}
 
-		class, _, err := bitcoin.ParseSingleAddress(s.config.Params, script)
+		class, _, err := ycash.ParseSingleAddress(s.config.Params, script)
 		if err != nil {
 			return nil, wrapErr(
 				ErrUnableToDecodeAddress,
@@ -605,7 +605,7 @@ func (s *ConstructionAPIService) parseUnsignedTransaction(
 				Index:        int64(len(ops)),
 				NetworkIndex: &networkIndex,
 			},
-			Type: bitcoin.OutputOpType,
+			Type: ycash.OutputOpType,
 			Account: &types.AccountIdentifier{
 				Address: addr.String(),
 			},
@@ -685,7 +685,7 @@ func (s *ConstructionAPIService) parseSignedTransaction(
 				Index:        int64(len(ops)),
 				NetworkIndex: &networkIndex,
 			},
-			Type: bitcoin.InputOpType,
+			Type: ycash.InputOpType,
 			Account: &types.AccountIdentifier{
 				Address: addr.EncodeAddress(),
 			},

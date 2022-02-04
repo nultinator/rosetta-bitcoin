@@ -17,8 +17,7 @@ package services
 import (
 	"context"
 
-	"github.com/nultinator/rosetta-ycash/ycash"
-
+	"github.com/nultinator/rosetta-ycash/configuration"
 	"github.com/coinbase/rosetta-sdk-go/server"
 	"github.com/coinbase/rosetta-sdk-go/types"
 )

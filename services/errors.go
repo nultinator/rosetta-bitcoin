@@ -25,7 +25,7 @@ var (
 		ErrUnimplemented,
 		ErrUnavailableOffline,
 		ErrNotReady,
-		ErrBitcoind,
+		ErrYcashd,
 		ErrBlockNotFound,
 		ErrUnableToDerive,
 		ErrUnclearIntent,
