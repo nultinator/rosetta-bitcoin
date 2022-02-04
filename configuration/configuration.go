@@ -20,7 +20,6 @@ import (
 	"os"
 	"path"
 	"strconv"
-	"time"
 
 	"github.com/nultinator/rosetta-ycash/ycash"
 
