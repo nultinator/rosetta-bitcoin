@@ -66,11 +66,11 @@ RUN mkdir -p "$GOPATH/src" "$GOPATH/bin" && chmod -R 777 "$GOPATH" \
 COPY . src
 RUN cd src \
   && pwd \
-  && go build 
-  #&& cd .. \
-  #&& mv src/rosetta-ycash /app/rosetta-ycash \
-  #&& mv src/assets/* /app \
-  #&& rm -rf src 
+  && go build \
+  && cd .. \
+  && mv src/rosetta-ycash /app/rosetta-ycash \
+  && mv src/assets/* /app \
+  && rm -rf src 
 
 ## Build Final Image
 FROM ubuntu:20.04 as nobody
@@ -90,9 +90,10 @@ WORKDIR /app
 COPY --from=ycashd-builder /app/ycashd /app/ycashd
 
 # Copy binary from rosetta-builder
-#COPY --from=rosetta-builder /app/* /app/
+COPY --from=rosetta-builder /app/* /app/
 
 # Set permissions for everything added to /app
 RUN chmod -R 755 /app/*
-
+RUN pwd \
+  && ls
 CMD ["/app/rosetta-ycash"]
